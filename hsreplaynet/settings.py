@@ -492,6 +492,12 @@ DECK_PREDICTION_MINIMUM_CARDS = 3
 # Set false to increase redis brute force search efficiency
 INCLUDE_CURRENT_BUCKET_IN_LOOKUP = False
 
+ILT_DECK_PREDICTION_MINIMUM_CARDS = 3
+# The sliding window duration of card to deck mappings to maintain
+ILT_LOOKBACK_MINS = 60 * 12
+# The sliding window size of deck popularities to maintain
+ILT_DECK_POPULARITY_LOOKBACK_MINS = 60 * 12
+
 # Used in some pages such as /downloads
 FONTAWESOME_CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
 FONTAWESOME_CSS_INTEGRITY = "sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0="
