@@ -4,6 +4,7 @@ import json
 import os
 import string
 import time
+from typing import Set
 
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField, JSONField
@@ -977,6 +978,13 @@ class ClusterManager(models.Manager):
 						result[external_id]["signature_weights"][int(dbf_id)] = weight
 
 			return result
+
+	def get_required_cards_for_player_class(self, game_format, player_class) -> Set[int]:
+		weights = self.get_signature_weights(game_format, player_class)
+		required_cards = set()
+		for cluster in weights.values():
+			required_cards.add(*cluster["required_cards"])
+		return required_cards
 
 	def get_live_cluster_for_archetype(self, game_format, archetype):
 		return ClusterSnapshot.objects.filter(
