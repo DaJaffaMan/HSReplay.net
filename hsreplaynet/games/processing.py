@@ -37,7 +37,7 @@ from hsreplaynet.uploads.utils import user_agent_product
 from hsreplaynet.utils import guess_ladder_season, log
 from hsreplaynet.utils.influx import influx_metric, influx_timer
 from hsreplaynet.utils.instrumentation import error_handler
-from hsreplaynet.utils.prediction import deck_prediction_tree
+from hsreplaynet.utils.prediction import deck_prediction_tree, inverse_lookup_table
 from hsreplaynet.vods.models import TwitchVod
 
 from .models import (
@@ -964,6 +964,14 @@ def predict_deck(
 		return None
 
 	return Deck.objects.get(id=predicted_deck_id)
+
+
+def perform_ilt_deck_prediction(game_format, player_class, deck, upload_event):
+	ilt = inverse_lookup_table(game_format, player_class)
+	# for now, let's just observe complete decks
+	if deck.size == 30:
+		with influx_timer("ilt_deck_prediction_duration", method="observe"):
+			ilt.observe(deck.dbf_map(), deck.id, uuid=upload_event.shortid)
 
 
 def update_replay_feed(replay):
