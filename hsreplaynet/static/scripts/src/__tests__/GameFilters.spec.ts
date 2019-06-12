@@ -4,6 +4,7 @@ import {
 	modeMatch,
 	nameMatch,
 	resultMatch,
+	seasonMatch,
 } from "../GameFilters";
 import { GameReplay, GlobalGame, GlobalGamePlayer } from "../interfaces";
 import * as TypeMoq from "typemoq";
@@ -199,6 +200,34 @@ describe("resultMatch", () => {
 	test("returns true for unrecognized results", () => {
 		expect(resultMatch(winningGame, "called_it_even")).toBe(true);
 		expect(resultMatch(losingGame, "its_a_toss_up")).toBe(true);
+	});
+});
+
+describe("seasonMatch", () => {
+	const createReplay = function(season: number): GameReplay {
+		const mockedGameReplay: TypeMoq.IMock<GameReplay> = TypeMoq.Mock.ofType<
+			GameReplay
+		>();
+		const mockedGlobalGame: TypeMoq.IMock<GlobalGame> = TypeMoq.Mock.ofType<
+			GlobalGame
+		>();
+
+		mockedGlobalGame.setup(x => x.ladder_season).returns(() => season);
+		mockedGameReplay
+			.setup(x => x.global_game)
+			.returns(() => mockedGlobalGame.object);
+
+		return mockedGameReplay.object;
+	};
+
+	const season1Game: GameReplay = createReplay(1);
+
+	test("correctly matches the game result", () => {
+		expect(seasonMatch(season1Game, "1")).toBe(true);
+	});
+
+	test("does not match the game result", () => {
+		expect(seasonMatch(season1Game, "2")).toBe(false);
 	});
 });
 

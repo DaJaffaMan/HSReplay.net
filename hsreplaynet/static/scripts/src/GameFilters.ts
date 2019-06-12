@@ -79,6 +79,14 @@ export function resultMatch(game: GameReplay, result: string): boolean {
 	}
 }
 
+export function seasonMatch(game: GameReplay, season: string): boolean {
+	if (game.global_game.ladder_season === parseInt(season, 10)) {
+		return true;
+	}
+
+	return false;
+}
+
 export function heroMatch(
 	cardData: CardData,
 	player: GlobalGamePlayer,

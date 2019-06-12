@@ -34,6 +34,7 @@ const render = (cardData: CardData) => {
 					mode: "",
 					format: "",
 					result: "",
+					season: "",
 					hero: "ALL",
 					opponent: "ALL",
 				}}

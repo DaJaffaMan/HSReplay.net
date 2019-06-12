@@ -18,6 +18,7 @@ import {
 	modeMatch,
 	nameMatch,
 	resultMatch,
+	seasonMatch,
 } from "../GameFilters";
 import { getHeroCard, image } from "../helpers";
 import {
@@ -28,6 +29,7 @@ import {
 } from "../interfaces";
 import Sticky from "../components/utils/Sticky";
 import NetworkNAdUnit from "../components/ads/NetworkNAdUnit";
+import { differenceInCalendarMonths } from "date-fns";
 
 type ViewType = "tiles" | "list";
 
@@ -55,6 +57,8 @@ interface Props
 	setHero?: (hero: string) => void;
 	opponent?: string;
 	setOpponent?: (opponent: string) => void;
+	season?: string;
+	setSeason?: (result: string) => void;
 }
 
 interface State {
@@ -67,10 +71,13 @@ interface State {
 	showFilters: boolean;
 	viewType: ViewType;
 	working: boolean;
+	currentSeason: string;
 }
 
 class MyReplays extends React.Component<Props, State> {
 	readonly viewCookie: string = "myreplays_viewtype";
+	// javascript december is 11 not 12
+	readonly firstRankedSeason: Date = new Date(2013, 11);
 
 	constructor(props: Props, context?: any) {
 		super(props, context);
@@ -85,6 +92,10 @@ class MyReplays extends React.Component<Props, State> {
 			showFilters: false,
 			viewType,
 			working: true,
+			currentSeason: differenceInCalendarMonths(
+				Date.now(),
+				this.firstRankedSeason,
+			).toString(),
 		};
 	}
 
@@ -154,6 +165,7 @@ class MyReplays extends React.Component<Props, State> {
 		const mode = this.props.mode;
 		const format = this.props.format;
 		const result = this.props.result;
+		const season = this.props.season;
 		const hero = this.props.hero !== "ALL" ? this.props.hero : null;
 		const opponent =
 			this.props.opponent !== "ALL" ? this.props.opponent : null;
@@ -169,6 +181,9 @@ class MyReplays extends React.Component<Props, State> {
 					return false;
 				}
 				if (result && !resultMatch(game, result)) {
+					return false;
+				}
+				if (season && !seasonMatch(game, season)) {
 					return false;
 				}
 				if (
@@ -520,6 +535,16 @@ class MyReplays extends React.Component<Props, State> {
 					>
 						<InfoboxFilter value="won">{t("Won")}</InfoboxFilter>
 						<InfoboxFilter value="lost">{t("Lost")}</InfoboxFilter>
+					</InfoboxFilterGroup>
+					<h2>{t("Season")}</h2>
+					<InfoboxFilterGroup
+						deselectable
+						selectedValue={this.props.season}
+						onClick={season => this.props.setSeason(season)}
+					>
+						<InfoboxFilter value={this.state.currentSeason}>
+							{t("Current season")}
+						</InfoboxFilter>
 					</InfoboxFilterGroup>
 					{backButton}
 					<Sticky bottom={0} key="ads">
