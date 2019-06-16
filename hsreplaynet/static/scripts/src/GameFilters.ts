@@ -2,6 +2,7 @@ import { GameReplay, GlobalGamePlayer } from "./interfaces";
 import { BnetGameType, FormatType } from "./hearthstone";
 import { getHeroCard } from "./helpers";
 import CardData from "./CardData";
+import { isSameMonth, subMonths } from "date-fns";
 
 export function nameMatch(game: GameReplay, name: string): boolean {
 	const players = [game.friendly_player, game.opposing_player];
@@ -80,8 +81,17 @@ export function resultMatch(game: GameReplay, result: string): boolean {
 }
 
 export function seasonMatch(game: GameReplay, season: string): boolean {
-	if (game.global_game.ladder_season === parseInt(season, 10)) {
-		return true;
+	const currentSeasonDate = Date.now();
+	switch (season) {
+		case "current":
+			return isSameMonth(game.global_game.match_start, currentSeasonDate);
+		case "previous":
+			return isSameMonth(
+				game.global_game.match_start,
+				subMonths(currentSeasonDate, 1),
+			);
+		default:
+			return true;
 	}
 
 	return false;

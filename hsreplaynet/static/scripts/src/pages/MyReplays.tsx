@@ -29,7 +29,6 @@ import {
 } from "../interfaces";
 import Sticky from "../components/utils/Sticky";
 import NetworkNAdUnit from "../components/ads/NetworkNAdUnit";
-import { differenceInCalendarMonths } from "date-fns";
 
 type ViewType = "tiles" | "list";
 
@@ -71,7 +70,6 @@ interface State {
 	showFilters: boolean;
 	viewType: ViewType;
 	working: boolean;
-	currentSeason: string;
 }
 
 class MyReplays extends React.Component<Props, State> {
@@ -92,10 +90,6 @@ class MyReplays extends React.Component<Props, State> {
 			showFilters: false,
 			viewType,
 			working: true,
-			currentSeason: differenceInCalendarMonths(
-				Date.now(),
-				this.firstRankedSeason,
-			).toString(),
 		};
 	}
 
@@ -542,8 +536,11 @@ class MyReplays extends React.Component<Props, State> {
 						selectedValue={this.props.season}
 						onClick={season => this.props.setSeason(season)}
 					>
-						<InfoboxFilter value={this.state.currentSeason}>
+						<InfoboxFilter value={"current"}>
 							{t("Current season")}
+						</InfoboxFilter>
+						<InfoboxFilter value={"previous"}>
+							{t("Previous season")}
 						</InfoboxFilter>
 					</InfoboxFilterGroup>
 					{backButton}
