@@ -74,8 +74,6 @@ interface State {
 
 class MyReplays extends React.Component<Props, State> {
 	readonly viewCookie: string = "myreplays_viewtype";
-	// javascript december is 11 not 12
-	readonly firstRankedSeason: Date = new Date(2013, 11);
 
 	constructor(props: Props, context?: any) {
 		super(props, context);
@@ -297,7 +295,6 @@ class MyReplays extends React.Component<Props, State> {
 
 		let page = 0;
 		const firstPage = this.state.gamesPages[page];
-
 		if (firstPage) {
 			games = this.filterGames(firstPage);
 			// we load one more than we need so we know whether there is next page
@@ -307,6 +304,14 @@ class MyReplays extends React.Component<Props, State> {
 			) {
 				const nextPage = this.state.gamesPages[++page];
 				if (!nextPage) {
+					if (
+						this.props.season &&
+						nextPage.some(
+							game => !seasonMatch(game, this.props.season),
+						)
+					) {
+						break;
+					}
 					if (
 						this.state.next &&
 						!this.state.working &&
