@@ -297,31 +297,40 @@ class MyReplays extends React.Component<Props, State> {
 		const firstPage = this.state.gamesPages[page];
 		if (firstPage) {
 			games = this.filterGames(firstPage);
-			// we load one more than we need so we know whether there is next page
-			while (
-				games.length <
-				this.state.pageSize * (this.state.currentLocalPage + 1) + 1
+			if (
+				!this.props.season ||
+				firstPage.every(
+					game => seasonMatch(game, this.props.season),
+				)
 			) {
-				const nextPage = this.state.gamesPages[++page];
-				if (!nextPage) {
+				// we load one more than we need so we know whether there is next page
+				while (
+					games.length <
+					this.state.pageSize * (this.state.currentLocalPage + 1) + 1
+					) {
+					const nextPage = this.state.gamesPages[++page];
 					if (
+						nextPage &&
 						this.props.season &&
 						nextPage.some(
 							game => !seasonMatch(game, this.props.season),
 						)
 					) {
+						games = games.concat(this.filterGames(nextPage));
 						break;
 					}
-					if (
-						this.state.next &&
-						!this.state.working &&
-						(hasFilters || page === this.state.currentLocalPage)
-					) {
-						this.query(this.state.next);
+					if (!nextPage) {
+						if (
+							this.state.next &&
+							!this.state.working &&
+							(hasFilters || page === this.state.currentLocalPage)
+						) {
+							this.query(this.state.next);
+						}
+						break;
 					}
-					break;
+					games = games.concat(this.filterGames(nextPage));
 				}
-				games = games.concat(this.filterGames(nextPage));
 			}
 			// slice off everything before the currentLocalPage
 			games = games.slice(
