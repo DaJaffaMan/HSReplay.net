@@ -406,7 +406,7 @@ class MyReplays extends React.Component<Props, State> {
 			</button>
 		);
 
-		const pager = (
+		const pager = games.length >= this.state.pageSize || this.state.currentLocalPage > 0 ? (
 			<Pager
 				currentPage={this.state.currentLocalPage + 1}
 				setCurrentPage={(p: number) =>
@@ -419,7 +419,7 @@ class MyReplays extends React.Component<Props, State> {
 				}
 				minimal
 			/>
-		);
+		) : null;
 
 		return (
 			<div className="my-replays-content">
