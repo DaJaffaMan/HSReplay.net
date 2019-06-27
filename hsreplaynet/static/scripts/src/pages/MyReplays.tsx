@@ -299,15 +299,13 @@ class MyReplays extends React.Component<Props, State> {
 			games = this.filterGames(firstPage);
 			if (
 				!this.props.season ||
-				firstPage.every(
-					game => seasonMatch(game, this.props.season),
-				)
+				firstPage.every(game => seasonMatch(game, this.props.season))
 			) {
 				// we load one more than we need so we know whether there is next page
 				while (
 					games.length <
 					this.state.pageSize * (this.state.currentLocalPage + 1) + 1
-					) {
+				) {
 					const nextPage = this.state.gamesPages[++page];
 					if (
 						nextPage &&
@@ -406,20 +404,22 @@ class MyReplays extends React.Component<Props, State> {
 			</button>
 		);
 
-		const pager = games.length >= this.state.pageSize || this.state.currentLocalPage > 0 ? (
-			<Pager
-				currentPage={this.state.currentLocalPage + 1}
-				setCurrentPage={(p: number) =>
-					this.setState({ currentLocalPage: p - 1 })
-				}
-				pageCount={
-					this.state.next
-						? null
-						: Object.keys(this.state.gamesPages).length
-				}
-				minimal
-			/>
-		) : null;
+		const pager =
+			games.length >= this.state.pageSize ||
+			this.state.currentLocalPage > 0 ? (
+				<Pager
+					currentPage={this.state.currentLocalPage + 1}
+					setCurrentPage={(p: number) =>
+						this.setState({ currentLocalPage: p - 1 })
+					}
+					pageCount={
+						this.state.next
+							? null
+							: Object.keys(this.state.gamesPages).length
+					}
+					minimal
+				/>
+			) : null;
 
 		return (
 			<div className="my-replays-content">
